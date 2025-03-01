@@ -1,4 +1,22 @@
+LAST_ACTIVE_ZONE=Border Zone
+
+ZONES=Border Zone,Skinner's Roam
+
 NAME=Border Zone
+GOV=Neutral
+REL=Neutral
+DESC=Central starting spot for a lot of starts
+SQD=Bonedogs,Dust bandits,Nomads,Shek Patrols
+NEST=Bonedogs,Dust bandits
+FACT=Dust bandits,Ninja Thieves,Shek
+SHOP=Bar (The Hub),Rogue Bar (Near The Hub)
+FERT=Arid 100%,Green 10%,Swamp 0%
+ORE=Iron 100%,Copper 80%
+GRND=Stone 100%,Water 50%
+IMAGE_LARGE=img\bz.jpg
+END
+
+NAME=Skinners Roam
 GOV=Neutral
 REL=Neutral
 DESC=Central starting spot for a lot of starts

@@ -6,15 +6,21 @@ NAME=Border Zone
 GOV=Neutral
 REL=Neutral
 DESC=Central starting spot for a lot of starts
-SQD=Bonedogs,Dust bandits,Nomads,Shek Patrols
-NEST=Bonedogs,Dust bandits
-FACT=Dust bandits,Ninja Thieves,Shek
-SHOP=Bar (The Hub),Rogue Bar (Near The Hub)
-FERT=Arid 100%,Green 10%,Swamp 0%
-ORE=Iron 100%,Copper 80%
-GRND=Stone 100%,Water 50%
-IMAGE_LARGE=img\bz.jpg
-END
+SQD=Bonedogs, Dust bandits, Nomads, Shek Patrols
+NEST=Bonedogs, Dust bandits
+FACT=Dust bandits, Ninja Thieves, Shek
+SHOP=Bar (The Hub), Rogue Bar (Near The Hub)
+WTHR=Clear, Dust Storm
+BNTY=Dust King
+OTHER=Bean
+FERT=Arid 100%, Green 10%, Swamp 0%
+ORE=Iron 100%, Copper 80%
+GRND=Stone 100%, Water 50%
+IMAGE_LARGE=img/bz.png
+IMAGE_SMALL=img/bz_sq.png
+IMAGE_SM_MAP=img/bz_map.png
+IMAGE_MAP=img/bz_outline.png
+END_ZONE_INFO
 
 NAME=Skinners Roam
 GOV=Neutral
@@ -24,7 +30,13 @@ SQD=Bonedogs,Dust bandits,Nomads,Shek Patrols
 NEST=Bonedogs,Dust bandits
 FACT=Dust bandits,Ninja Thieves,Shek
 SHOP=Bar,Rogue Bar
+WTHR=Clear,Dust Storm
+BNTY=
 FERT=
 ORE=
 GRND=
-END
+IMAGE_LARGE=img/bz.jpg
+IMAGE_SMALL=img/bz_sq.jpg
+IMAGE_SM_MAP=img/bz_map.jpg
+IMAGE_MAP=img/bz_outline.jpg
+END_ZONE_INFO

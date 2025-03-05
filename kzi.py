@@ -14,6 +14,7 @@ from PIL import ImageTk, Image, ImageOps, ImageTk
 # Initialize Variables
 dataFile = open("data.txt", "r")
 dataText = dataFile.read()
+CLOSING_TAG = "END_ZONE_INFO" # makes code cleaner to use a constant
 
 genNotesOpen = bool(False)
 genNotesActiveWindow = str()
@@ -22,6 +23,7 @@ genNotesActiveWindow = str()
 class DisplayedZone:
     # Initialize our vars
     def __init__(self, filteredText):
+        # all of this is so we can call these easy for the window
         self.zoneName = filteredText[0]
         self.zoneGov = filteredText[1]
         self.zoneRel = filteredText[2]
@@ -46,6 +48,7 @@ class DisplayedZone:
         print(self.zoneName)
 
     def updateData(self, filteredText):
+        # same as above but update the data
         self.zoneName = filteredText[0]
         self.zoneGov = filteredText[1]
         self.zoneRel = filteredText[2]
@@ -67,135 +70,164 @@ class DisplayedZone:
         self.zoneNotes = filteredText[18]
 
 class ZoneNotesWindow:
+    # zone notes window
     def __init__(self):
-        self.root = Tk()
-        self.rememberName = activeZone.zoneName
-        self.dynamicTitle = str(self.rememberName + " Notes (saves on close)")
+        self.root = Tk() # make the window
+        self.rememberName = activeZone.zoneName # we need this to search the file later
+        self.dynamicTitle = str(self.rememberName + " Notes (saves on close)") # we use the remembered name for the title bar too
         self.root.title(self.dynamicTitle)
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
-        self.root.geometry("600x900")
+        self.root.geometry("600x900") # initial size
 
-        self.zoneData = readZoneNotes(self.rememberName)
+        self.zoneData = readZoneNotes(self.rememberName) # we get the notes section of the file
 
-        self.font_tuple = ("Calibri", 12, "normal")
-        self.textblock = Text(self.root)
+        self.font_tuple = ("Calibri", 12, "normal") # so the text doesn't look bad
+        self.textblock = Text(self.root) # make the text element
         self.textblock.configure(font = self.font_tuple)
-        self.textblock.insert(1.0, self.zoneData)
-        self.textblock.pack(fill="both", expand=True)
+        self.textblock.insert(1.0, self.zoneData) # put the zone notes in the text element
+        self.textblock.pack(fill="both", expand=True) # place it on screen
 
-        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing) # the easiest way to deal with saving the file is on close
         self.root.mainloop()
 
     def on_closing(self):
-        writeZoneNotes(self.rememberName, self)
+        # runs when the window closes; saves the changes
+        writeZoneNotes(self.rememberName, self) # call function to write to the file
         self.root.destroy()
         
 
 class GeneralNotesWindow:
+    # general notes window
     def __init__(self):
-        self.root = Tk()
-        self.root.title("General Notes (saves on close)")
+        self.root = Tk() # make the window
+        self.root.title("General Notes (saves on close)") # set the title
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
-        self.root.geometry("600x900")
+        self.root.geometry("600x900") # initial size
 
-        self.font_tuple = ("Calibri", 12, "normal")
-        self.textblock = Text(self.root)
+        self.font_tuple = ("Calibri", 12, "normal") # so the text doesn't look bad
+        self.textblock = Text(self.root) # make the text element
         self.textblock.configure(font = self.font_tuple)
-        self.readtext = readGenNotes()
-        self.textblock.insert(1.0, self.readtext)
-        self.textblock.pack(fill="both", expand=True)
+        self.readtext = readGenNotes() # get the gen notes file and read it to the var
+        self.textblock.insert(1.0, self.readtext) # put the notes into the text element
+        self.textblock.pack(fill="both", expand=True) # put the text element in the window
 
-        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing) # easiest way to save the changes is when the window closes
         self.root.mainloop()
 
     def on_closing(self):
-        writeGenNotes(self)
-        global genNotesOpen
-        genNotesOpen = False
+        writeGenNotes(self) # call the function to write to the file
+        # global genNotesOpen       # this is leftover from an experiment
+        # genNotesOpen = False      # this is leftover from an experiment
         self.root.destroy()    
         
 class MainWindowService:
     def __init__(self):
-        self.root = Tk()
-        self.root.title("Kenshi Zone Informer")
+        self.root = Tk() # make the main window
+        self.root.title("Kenshi Zone Informer") # set the title
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
-        self.root.geometry("1300x900")
-        self.root_width = 1300
-        self.root_height = 900
-        self.root_halfwidth = int(self.root_width / 2)
-        self.root_halfheight = int(self.root_height / 2)
+        self.root.geometry("1400x800") # initial size
+        self.root_width = 1400 # keep that
+        self.root_height = 800 # keep that
+        self.root_halfwidth = int(self.root_width / 2) # for setting frame widths
+        self.root_halfheight = int(self.root_height / 2) # for setting frame heights
 
-        self.mainframe = ttk.Frame(self.root, padding="5 5 5 5")
-        self.lefthalf = ttk.Frame(self.mainframe, padding="0 0 5 0")
-        self.righthalf = ttk.Frame(self.mainframe, padding="0 5 0 0")
-        self.righttophalf = ttk.Frame(self.righthalf, padding="0 0 0 0")
+        self.mainframe = ttk.Frame(self.root, padding="5 5 5 5") # make the overall frame in the window
+        self.lefthalf = ttk.Frame(self.mainframe, width=self.root_halfwidth, height=self.root_height, padding="0 0 5 0") # left half of the window
+        self.righthalf = ttk.Frame(self.mainframe, width=self.root_halfwidth, height=self.root_height, padding="0 5 0 0") # right half of the window
+        self.righttophalf = ttk.Frame(self.righthalf, padding="0 0 0 0") # we split the right side into two halves for images
         self.rightbottomhalf = ttk.Frame(self.righthalf, padding="0 0 0 0")
 
-        self.lefttopthird = ttk.Frame(self.lefthalf, height=80, width=800, padding="0 0 0 0")
+        self.lefttopthird = ttk.Frame(self.lefthalf, height=80, padding="0 0 0 0") # we split the left side into thirds
         self.leftmidthird = ttk.Frame(self.lefthalf, height=570, padding="0 0 0 0")
         self.leftbottomthird = ttk.Frame(self.lefthalf, height=250, padding="0 0 0 0")
-        self.extra_infobox_button_frame = ttk.Frame(self.leftbottomthird, padding="0 0 0 0")
 
-        self.selectazone = StringVar(value="Border Zone")
+        self.extra_infobox_button_frame = ttk.Frame(self.leftbottomthird, padding="0 0 0 0") # we need a frame for the buttons on the extra info box
 
-        self.drop_box = ttk.Combobox(self.lefttopthird, values=zoneNames, textvariable=self.selectazone, state="readonly", width=60)
-        self.general_notes = ttk.Button(self.lefttopthird, text="General Notes", command=openGenNotes)
-        self.zone_notes = ttk.Button(self.lefttopthird, text="Zone Notes", command=openZoneNotes)
-        self.factions = ttk.Button(self.extra_infobox_button_frame, text="Factions", command=self.factionButton)
-        self.shops = ttk.Button(self.extra_infobox_button_frame, text="Shops", command=self.shopButton)
-        self.weather = ttk.Button(self.extra_infobox_button_frame, text="Weather", command=self.weatherButton)
-        self.prospecting = ttk.Button(self.extra_infobox_button_frame, text="Prospecting", command=self.prospectingButton)
-        self.bounties = ttk.Button(self.extra_infobox_button_frame, text="Bounties", command=self.bountiesButton)
-        self.other = ttk.Button(self.extra_infobox_button_frame, text="Other", command=self.otherButton)
+        self.selectazone = StringVar(value=activeZone.zoneName) # default
 
-        self.infobox = tk.Text(self.leftmidthird)
-        self.extra_infobox = tk.Text(self.leftbottomthird)
+        self.drop_box = ttk.Combobox(self.lefttopthird, values=zoneNames, textvariable=self.selectazone, state="readonly", width=60) # set up the combo box
+        self.general_notes = ttk.Button(self.lefttopthird, text="General Notes", command=openGenNotes) # the button for general notes
+        self.zone_notes = ttk.Button(self.lefttopthird, text="Zone Notes", command=openZoneNotes) # zone notes button
+        self.factions = ttk.Button(self.extra_infobox_button_frame, text="Factions", command=self.factionButton) # run func on click to change info box
+        self.shops = ttk.Button(self.extra_infobox_button_frame, text="Shops", command=self.shopButton) # run func on click to change info box
+        self.weather = ttk.Button(self.extra_infobox_button_frame, text="Weather", command=self.weatherButton) # run func on click to change info box
+        self.prospecting = ttk.Button(self.extra_infobox_button_frame, text="Prospecting", command=self.prospectingButton) # run func on click to change info box
+        self.bounties = ttk.Button(self.extra_infobox_button_frame, text="Bounties", command=self.bountiesButton) # run func on click to change info box
+        self.other = ttk.Button(self.extra_infobox_button_frame, text="Other", command=self.otherButton) # run func on click to change info box
 
-        self.font_tuple = ("Calibri", 12, "normal")
-        self.infobox.configure(font = self.font_tuple)
+        self.infobox = tk.Text(self.leftmidthird) # make the main info box element
+        self.extra_infobox = tk.Text(self.leftbottomthird) # make the extra info box element
+
+        self.font_tuple = ("Calibri", 12, "normal") # need this to make the text not look bad
+
+        self.infobox.configure(font = self.font_tuple) # set the info boxes to use the better font
         self.extra_infobox.configure(font = self.font_tuple)
 
-        #self.root.resizable(False, False)
-        self.packItUp()
-        self.drop_box.bind("<<ComboboxSelected>>", lambda x: giveMeZone(self))
-        # self.root.bind('<Configure>', self.resizeWindow)
-        self.root.mainloop()
+        
 
-    '''
+        self.root.resizable(False, False) # resizing the program is a lot of effort and likes to cause problems
+        
+        self.packItUp() # func; put all the elements in the main window
+        
+        self.drop_box.bind("<<ComboboxSelected>>", lambda x: giveMeZone(self)) # run a function when the combobox changes (zone is changed)
+        
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing) # we save the open zone to the file to open to it first on subsequent runs
+        self.root.mainloop() 
+
+    '''  
+    the following is leftover from trying to make resizing work properly
+    I tried for a pretty long time to get this stuff to work like I wanted
+    while it's kind of there it just doesn't work right
+
+    self.rbh_width = self.rightbottomhalf.winfo_width()
+    self.rbh_height = self.rightbottomhalf.winfo_height()
+    self.largeImage = Image.open(activeZone.zoneLargeImg)
+    self.resized = self.largeImage.resize((self.rbh_width, self.rbh_height))
+    self.tk_image = ImageTk.PhotoImage(self.resized)
+    self.resize_active = None
+    self.root.bind('<Configure>', self.resizing)
+
+    def resizing(self, event):
+        if self.resize_active:
+            self.root.after_cancel(self.resize_active)
+        self.resize_active = self.root.after(500, self.resizeWindow, event)
+
     def resizeWindow(self, event):
-        self.new_width = event.width
-        self.new_height = event.height
-        self.new_halfwidth = int(event.width / 2)
-        self.new_halfheight = int(event.height / 2)
-        self.lefthalf.configure(width=self.new_halfwidth, height=self.new_halfheight)
-        self.righthalf.configure(width=self.new_halfwidth, height=self.new_halfheight)
-        self.lefttopthird.configure(width=self.new_halfwidth, height=(self.new_height / 8))
-        self.leftmidthird.configure(width=self.new_halfwidth, height=(self.new_height / 2))
-        self.leftbottomthird.configure(width=self.new_halfwidth, height=(self.new_height / 2))
-    '''
+        self.root_width = event.width
+        self.root_height = event.height
+        self.root_halfheight = int(self.root_height / 2)
+        self.root_halfwidth = int(self.root_width / 2)
+        #self.lefthalf.configure(width=self.root_halfwidth, height=self.root_height)
+        #self.righthalf.configure(width=self.root_halfwidth, height=self.root_height)
+    '''  
 
     def factionButton(self):
+        # we change the information in the extra box when this is called
         self.extra_infobox.configure(state="normal")
         self.extra_infobox.delete(1.0, tk.END)
         self.extra_infobox.insert(1.0, activeZone.zoneFact)
         self.extra_infobox.configure(state="disabled")
 
     def shopButton(self):
+        # we change the information in the extra box when this is called
         self.extra_infobox.configure(state="normal")
         self.extra_infobox.delete(1.0, tk.END)
         self.extra_infobox.insert(1.0, activeZone.zoneShop)
         self.extra_infobox.configure(state="disabled")
 
     def weatherButton(self):
+        # we change the information in the extra box when this is called
         self.extra_infobox.configure(state="normal")
         self.extra_infobox.delete(1.0, tk.END)
         self.extra_infobox.insert(1.0, activeZone.zoneWthr)
         self.extra_infobox.configure(state="disabled")
 
     def prospectingButton(self):
+        # we change the information in the extra box when this is called
+        # we put multiple different datas in here as a combined string
         temp = str(activeZone.zoneFert + "\n" + activeZone.zoneOre + "\n" + activeZone.zoneGrnd)
         self.extra_infobox.configure(state="normal")
         self.extra_infobox.delete(1.0, tk.END)
@@ -203,30 +235,34 @@ class MainWindowService:
         self.extra_infobox.configure(state="disabled")
 
     def bountiesButton(self):
+        # we change the information in the extra box when this is called
         self.extra_infobox.configure(state="normal")
         self.extra_infobox.delete(1.0, tk.END)
         self.extra_infobox.insert(1.0, activeZone.zoneBnty)
         self.extra_infobox.configure(state="disabled")
 
     def otherButton(self):
+        # we change the information in the extra box when this is called
         self.extra_infobox.configure(state="normal")
         self.extra_infobox.delete(1.0, tk.END)
         self.extra_infobox.insert(1.0, activeZone.zoneSqd)
         self.extra_infobox.configure(state="disabled")
 
     def packItUp(self):
-        # We're setting up the window frames
+        # We're putting all the elements in the window
         self.mainframe.columnconfigure(0, weight=1)
         self.mainframe.rowconfigure(0, weight=1)
         self.mainframe.pack(fill='both', expand=True)
 
         self.lefthalf.columnconfigure(0, weight=1)
         self.lefthalf.rowconfigure(0, weight=1)
-        self.lefthalf.pack(side='left', fill='both', expand=True)
+        #self.lefthalf.pack(side='left', fill='both', expand=True) # commented out for testing reasons
+        self.lefthalf.grid(row=0, column=0, sticky=(W))
 
         self.righthalf.columnconfigure(0, weight=1)
         self.righthalf.rowconfigure(0, weight=1)
-        self.righthalf.pack(side='right', fill='both', expand=True)
+        #self.righthalf.pack(side='right', fill='both', expand=True) # commented out for testing reasons
+        self.righthalf.grid(row=0, column=1, sticky=(E))
 
         # containers in the frames
         # right side subframes
@@ -237,6 +273,9 @@ class MainWindowService:
         self.rightbottomhalf.pack(side="bottom")
         self.rightbottomhalf.columnconfigure(0, weight=1)
         self.rightbottomhalf.rowconfigure(0, weight=1)
+
+        #self.label = ttk.Label(self.rightbottomhalf, image=self.tk_image)
+        #self.label.pack(fill="both", expand=True)
 
         # left side subframes
         self.lefttopthird.pack_propagate(False)
@@ -255,6 +294,7 @@ class MainWindowService:
 
         self.extra_infobox_button_frame.pack(side="left", fill="both", expand=True)
 
+        # pack the elements so they go on screen
         self.drop_box.pack(side="left")
         self.general_notes.pack(side="right")
         self.zone_notes.pack(side="right")
@@ -270,101 +310,132 @@ class MainWindowService:
         self.bounties.pack(expand=True, ipadx=4, ipady=4, fill="both")
         self.other.pack(expand=True, ipadx=4, ipady=4, fill="both")
         self.extra_infobox.pack(side="left", fill="both", expand=True)
-        self.extra_infobox.insert('1.0', activeZone.zoneFact)
-        self.extra_infobox.configure(state="disabled")
+        self.extra_infobox.insert('1.0', activeZone.zoneFact) # put the info in there
+        self.extra_infobox.configure(state="disabled") # stops you from writing in it
 
     def updateData(self):
+        # we use this to change whats on screen when the zone changes
         self.infobox.configure(state="normal")
         self.infobox.delete(1.0, tk.END)
         self.infobox.insert(1.0, activeZone.zoneDesc)
         self.infobox.configure(state="disabled")
-        self.factionButton()
+        self.factionButton() # we could change this later to find the button last clicked but for now this is fine
+
+    def on_closing(self):
+        writeLastActiveZone() # call the function to write to the file
+        self.root.destroy()
 
 def filterFile(inputZone):
     # Data and vars
-    textLength = len(dataText)
-    zoneToFind = str("NAME="+inputZone)
+    textLength = len(dataText) # length of the text in the file
+    zoneToFind = str("NAME="+inputZone) # build a string to find the zone in the file
     # Find our indices
-    startingIndex = dataText.find(zoneToFind)
-    endingIndex = dataText.find("END_ZONE_INFO", startingIndex, textLength)
+    startingIndex = dataText.find(zoneToFind) # find the first instance of the zone
+    endingIndex = dataText.find(CLOSING_TAG, startingIndex, textLength) # find the closing tag
     # Use our indices to form a list version of the data
-    filteredText = dataText[startingIndex:endingIndex]
-    filteredText = filteredText.splitlines()
-    # Remove the fat
-    for line in range(len(filteredText)):
-        startHere = filteredText[line].find("=") + 1
-        endHere = (len(filteredText[line]))
-        filteredText[line] = filteredText[line][startHere:endHere]
-    return filteredText
+    filteredText = dataText[startingIndex:endingIndex] # get the section for the zone
+    filteredText = filteredText.splitlines() # split into lines for data building
+    # Remove the fat; we just need the actual info
+    for line in range(len(filteredText)): # for every line
+        startHere = filteredText[line].find("=") + 1 # split at the tag delimiter
+        endHere = (len(filteredText[line])) # get the length of the line
+        filteredText[line] = filteredText[line][startHere:endHere] # get just the actual data the tag is pointing to
+    return filteredText # return the list of data
 
 def refreshInfo():
-    global dataFile
+    # we reget the data file every time we change it
+    global dataFile # call globals to be sure
     global dataText
-    dataFile = open("data.txt", "r")
-    dataText = dataFile.read()
-    return None
+    dataFile = open("data.txt", "r") # re-open the file
+    dataText = dataFile.read() # re-read it for the variable
+    return None # no return necessary
 
 def openZoneNotes():
+    # open up a zone notes window
     ZoneNotesWindow()
-    return None
+    return None # no return necessary
 
 def writeZoneNotes(inputZone, window):
-    CLOSING_TAG = "END_ZONE_INFO"
-    global dataText
+    # this is similar to the filterFile function but has to be different for writing zone notes
+    global dataText # not sure if we need to but we do this anyway
 
-    dataFileWriteMode = open("data.txt", "w")
-    textLength = len(dataText)
-    zoneToFind = str("NAME="+inputZone)
-    startingIndex = dataText.find(zoneToFind)
-    endingIndex = dataText.find(CLOSING_TAG, startingIndex, textLength)
+    dataFileWriteMode = open("data.txt", "w") # open the data file as a write-able
+    textLength = len(dataText) # length of the file
+    zoneToFind = str("NAME="+inputZone) # put together a string to search the file
+    startingIndex = dataText.find(zoneToFind) # we need to find the index of the zone name in the file
+    endingIndex = dataText.find(CLOSING_TAG, startingIndex, textLength) # we need to find where zone data ends
     notesIndex = (dataText.find("NOTES=", startingIndex, endingIndex) + 6) # get the zone notes index and add 6 (the length of the 'notes=' tag)
-    notesToWrite = window.textblock.get('1.0', tk.END)
-    newNotes = dataText[:notesIndex] + notesToWrite + dataText[endingIndex:textLength]
-    dataFileWriteMode.write(newNotes)
-    del dataFileWriteMode
-    refreshInfo()
-    return None
+    notesToWrite = window.textblock.get('1.0', tk.END) # get the new notes from the window
+    newNotes = dataText[:notesIndex] + notesToWrite + dataText[endingIndex:textLength] # make a new block of data to write and replace
+    dataFileWriteMode.write(newNotes) # write
+    del dataFileWriteMode # delete the variable this function makes or it causes major issues
+    refreshInfo() # reload the file
+    return None # we don't need to return anything
     
 def readZoneNotes(inputZone):
-    textLength = len(dataText)
-    zoneToFind = str("NAME="+inputZone)
-    startingIndex = dataText.find(zoneToFind)
-    endingIndex = dataText.find("END_ZONE_INFO", startingIndex, textLength)
+    # while similar to other functions, has a unique purpose
+    textLength = len(dataText) # length of the data file
+    zoneToFind = str("NAME="+inputZone) # build a string to search for the zone
+    startingIndex = dataText.find(zoneToFind) # find where it starts
+    endingIndex = dataText.find(CLOSING_TAG, startingIndex, textLength) # find where it ends
     notesIndex = (dataText.find("NOTES=", startingIndex, endingIndex) + 6) # get the zone notes index and add 6 (the length of the 'notes=' tag)
-    notesToRead = dataText[notesIndex:endingIndex]
-    return notesToRead
+    notesToRead = dataText[notesIndex:endingIndex] # get just the notes part of the notes
+    return notesToRead # return to the zone notes window
 
 def openGenNotes():
+    # open the gen notes window
     GeneralNotesWindow()
-    return None
+    return None # no return necessary
 
 def readGenNotes():
+    # read the gen notes file
     genNotes = open("general_notes.txt", "r")
     genNotesText = genNotes.read()
-    return genNotesText
+    return genNotesText # send the text back to the caller
 
 def writeGenNotes(window):
+    # write the gen notes file
     genNotes = open("general_notes.txt", "w")
     notesFromWindow = window.textblock.get('1.0', tk.END)
     genNotes.write(notesFromWindow)
-    return None
+    return None # no return necessary
 
 def getZoneNames():
-    linedFile = dataText.splitlines()
+    # we search a specific line index and split it up to get the zone names to populate the combobox
+    linedFile = dataText.splitlines() # split the data file into lines
     newList = re.split('=|,', linedFile[2]) # we dont need to specify more because it's just this line
-    newList.pop(0)
-    return newList
+    newList.pop(0) # remove the prefix tag
+    return newList # return the list of zones
     
 def giveMeZone(window):
-    inputZone = window.drop_box.get()
-    filteredText = filterFile(inputZone)
-    activeZone.updateData(filteredText)
-    window.updateData()
-    return None
+    # we run this when we need to change the zone
+    inputZone = window.drop_box.get() # get the value of the combobox (the selected zone)
+    filteredText = filterFile(inputZone) # run the filterfile for data
+    activeZone.updateData(filteredText) # run a func in the displayedzone class to change data
+    window.updateData() # run a func that updates the main window's data
+    return None # this func doesn't return anything because everyone else gets their info elsewhere
 
-def startWithZone(inputZone="Border Zone"):
-    filteredText = filterFile(inputZone)
-    return filteredText
+def startWithZone():
+    # we use a tag line in the data file to open to the last opened zone
+    linedFile = dataText.splitlines() # split the data file into lines
+    newString = linedFile[0] # we need the first line
+    newList = newString.split("=") # split at the tag delimiter
+    newList.pop(0) # remove the tag
+    lastZone = newList[0] # we make a string equal to the list's only value
+    filteredText = filterFile(lastZone) # filterfile func for the last opened zone
+    return filteredText # return filterfile's filteredtext
+
+def writeLastActiveZone():
+    # we write to the data file the last zone that was opened on close. It will open to that zone
+    dataFileWriteMode = open("data.txt", "w") # open the data file as a write-able
+    textLength = len(dataText) # we need the length
+    zoneToWrite = str("LAST_ACTIVE_ZONE="+activeZone.zoneName) # build a string to write the first line
+    endingIndex = dataText.find("END_LAST_ACTIVE_ZONE") # we need to know where the end is
+    endingIndex -= 1 # we subtract 1 because it counts the E as the start
+    finalData = zoneToWrite + dataText[endingIndex:textLength] # make the final string
+    dataFileWriteMode.write(finalData) # write the final string to the file
+    del dataFileWriteMode # delete the variable this function makes or it causes major issues
+    return None # we dont need to return anything
 
 if __name__ == "__main__":
     # Initialize to something at all

@@ -72,7 +72,7 @@ class DisplayedZone:
 class ZoneNotesWindow:
     # zone notes window
     def __init__(self):
-        self.root = Tk() # make the window
+        self.root = tk.Toplevel() # make the window
         self.rememberName = activeZone.zoneName # we need this to search the file later
         self.dynamicTitle = str(self.rememberName + " Notes (saves on close)") # we use the remembered name for the title bar too
         self.root.title(self.dynamicTitle)
@@ -99,7 +99,7 @@ class ZoneNotesWindow:
 class GeneralNotesWindow:
     # general notes window
     def __init__(self):
-        self.root = Tk() # make the window
+        self.root = tk.Toplevel() # make the window
         self.root.title("General Notes (saves on close)") # set the title
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
@@ -120,35 +120,62 @@ class GeneralNotesWindow:
         # global genNotesOpen       # this is leftover from an experiment
         # genNotesOpen = False      # this is leftover from an experiment
         self.root.destroy()    
-        
+
+class BigMapWindow:
+    # big map window
+    def __init__(self):
+        self.root = tk.Toplevel() #make window
+        self.rememberName = activeZone.zoneName # need this for the title bar
+        self.dynamicTitle = str(self.rememberName + " Map Location") # make titlebar string
+        self.root.title(self.dynamicTitle) # set title
+        self.root.columnconfigure(0, weight=1)
+        self.root.rowconfigure(0, weight=1)
+        self.root.geometry("900x900") # size of window
+
+        self.prepMapImg = Image.open(activeZone.zoneLargeMap) # load the image using PIL
+        self.prepMapImg = self.prepMapImg.resize((900, 900), Image.BILINEAR) # resize it
+        self.mapImage = ImageTk.PhotoImage(self.prepMapImg) # change it to a normal image
+        self.mapImageLabel = ttk.Label(self.root, image=self.mapImage) # prep the label
+
+        self.mapImageLabel.pack(fill="both", expand=True)
+
+        self.root.mainloop()
+
 class MainWindowService:
     def __init__(self):
         self.root = Tk() # make the main window
         self.root.title("Kenshi Zone Informer") # set the title
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
-        self.root.geometry("1600x800") # initial size
+        self.root.geometry("1600x790") # initial size
         self.ratio = 0.5625
         self.root_width = 1600 # keep that
-        self.root_height = 800 # keep that
+        self.root_height = 790 # keep that
         self.root_halfwidth = int(self.root_width / 2) # for setting frame widths
         self.root_halfheight = int(self.root_height / 2) # for setting frame heights
+        self.root_lefttopheight = int(self.root_height * 0.088 )
+        self.root_leftmidheight = int(self.root_height * 0.633)
+        self.root_leftbottomheight = int(self.root_height * 0.277)
         self.root_ratio_height = int(self.root_halfwidth * self.ratio)
 
         self.mainframe = ttk.Frame(self.root, padding="5 5 5 5") # make the overall frame in the window
         self.lefthalf = ttk.Frame(self.mainframe, width=self.root_halfwidth, height=self.root_height, padding="0 0 5 0") # left half of the window
         self.righthalf = ttk.Frame(self.mainframe, width=self.root_halfwidth, height=self.root_height, padding="0 5 0 0") # right half of the window
         
-        self.righttophalf = ttk.Frame(self.righthalf, padding="0 0 0 0") # we split the right side into two halves for images
-        self.rightbottomhalf = ttk.Frame(self.righthalf, padding="0 0 0 0")
+        self.righttophalf = ttk.Frame(self.righthalf, width=self.root_halfwidth, height=self.root_halfheight, padding="0 0 0 0") # we split the right side into two halves for images
+        self.rightbottomhalf = ttk.Frame(self.righthalf, width=self.root_halfwidth, height=self.root_halfheight, padding="0 0 0 0")
 
-        self.lefttopthird = ttk.Frame(self.lefthalf, height=80, padding="0 0 0 0") # we split the left side into thirds
-        self.leftmidthird = ttk.Frame(self.lefthalf, height=570, padding="0 0 0 0")
-        self.leftbottomthird = ttk.Frame(self.lefthalf, height=250, padding="0 0 0 0")
+        self.lefttopthird = ttk.Frame(self.lefthalf, width=self.root_halfwidth, height=self.root_lefttopheight, padding="0 0 0 0") # we split the left side into thirds
+        self.leftmidthird = ttk.Frame(self.lefthalf, width=self.root_halfwidth, height=self.root_leftmidheight, padding="0 0 0 0")
+        self.leftbottomthird = ttk.Frame(self.lefthalf, width=self.root_halfwidth, height=self.root_leftbottomheight, padding="0 0 0 0")
 
-        self.extra_infobox_button_frame = ttk.Frame(self.leftbottomthird, padding="0 0 0 0") # we need a frame for the buttons on the extra info box
+        self.extra_infobox_button_frame = ttk.Frame(self.leftbottomthird, width=self.root_halfwidth, height=self.root_leftbottomheight, padding="0 0 0 0") # we need a frame for the buttons on the extra info box
 
         self.selectazone = StringVar(value=activeZone.zoneName) # default
+        self.builtGovStr = str("Local Government: " + activeZone.zoneGov) # make a string for gov label
+        self.govString = StringVar(value=self.builtGovStr) 
+        self.builtRelStr = str("Default Relations: " + activeZone.zoneRel) # make a string for rel label
+        self.relString = StringVar(value=self.builtRelStr)
 
         self.drop_box = ttk.Combobox(self.lefttopthird, values=zoneNames, textvariable=self.selectazone, state="readonly", width=60) # set up the combo box
         self.general_notes = ttk.Button(self.lefttopthird, text="General Notes", command=openGenNotes) # the button for general notes
@@ -160,7 +187,13 @@ class MainWindowService:
         self.bounties = ttk.Button(self.extra_infobox_button_frame, text="Bounties", command=self.bountiesButton) # run func on click to change info box
         self.other = ttk.Button(self.extra_infobox_button_frame, text="Other", command=self.otherButton) # run func on click to change info box
 
-        self.infobox = tk.Text(self.leftmidthird, width=98) # make the main info box element
+        self.gov = ttk.Label(self.lefttopthird, textvariable=self.govString) # label for gov
+        
+        self.rel = ttk.Label(self.lefttopthird, textvariable=self.relString) # label for relations
+
+
+        self.infobox = tk.Text(self.leftmidthird, width=98, height=26) # make the main info box element
+
         self.extra_infobox = tk.Text(self.leftbottomthird) # make the extra info box element
 
         self.font_tuple = ("Calibri", 12, "normal") # need this to make the text not look bad
@@ -181,7 +214,7 @@ class MainWindowService:
         self.prepSmMap = Image.open(activeZone.zoneSmallMap) # load the image using PIL
         self.prepSmMap = self.prepSmMap.resize((self.root_halfheight, self.root_halfheight), Image.BILINEAR) # resize it
         self.smallMap = ImageTk.PhotoImage(self.prepSmMap) # change it to a normal image
-        self.smallMapLabel = ttk.Label(self.righttophalf, image=self.smallMap) # prep the label
+        self.smallMapButton = ttk.Button(self.righttophalf, image=self.smallMap, command=openMapWindow) # prep the label
 
         '''
         self.largeImage = PhotoImage(file=activeZone.zoneLargeImg) # load the image
@@ -192,7 +225,8 @@ class MainWindowService:
         self.smallMapLabel = ttk.Label(self.rightbottomhalf, image=self.smallMap) # make a label
         self.largeMap = PhotoImage(file=activeZone.zoneLargeMap) # load the image
         '''
-        
+
+        #self.root.bind('<Configure>', self.resizeWindow)
         self.root.resizable(False, False) # resizing the program is a lot of effort and likes to cause problems
         self.drop_box.bind("<<ComboboxSelected>>", lambda x: giveMeZone(self)) # run a function when the combobox changes (zone is changed)
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing) # we save the open zone to the file to open to it first on subsequent runs
@@ -211,6 +245,17 @@ class MainWindowService:
         self.righthalf.update()
         self.righttophalf.update()
         self.rightbottomhalf.update()
+        self.leftmidthird.configure(height=self.root_leftmidheight)
+        '''
+        # keeping this in case
+        self.lefthalf.config(width=self.root_halfwidth, height=self.root_height)
+        self.righthalf.config(width=self.root_halfwidth, height=self.root_height)
+        self.lefttopthird.config(width=self.root_halfwidth, height=self.root_lefttopheight)
+        self.leftmidthird.config(width=self.root_halfwidth, height=self.root_leftmidheight)
+        self.leftbottomthird.config(width=self.root_halfwidth, height=self.root_leftbottomheight)
+        self.rightbottomhalf.config(width=self.root_halfwidth, height=self.root_halfheight)
+        self.righttophalf.config(width=self.root_halfwidth, height=self.root_halfheight)
+        '''
         return None
 
     '''  
@@ -224,21 +269,20 @@ class MainWindowService:
     self.resized = self.largeImage.resize((self.rbh_width, self.rbh_height))
     self.tk_image = ImageTk.PhotoImage(self.resized)
     self.resize_active = None
-    self.root.bind('<Configure>', self.resizing)
-
-    def resizing(self, event):
-        if self.resize_active:
-            self.root.after_cancel(self.resize_active)
-        self.resize_active = self.root.after(500, self.resizeWindow, event)
 
     def resizeWindow(self, event):
-        self.root_width = event.width
-        self.root_height = event.height
-        self.root_halfheight = int(self.root_height / 2)
-        self.root_halfwidth = int(self.root_width / 2)
-        #self.lefthalf.configure(width=self.root_halfwidth, height=self.root_height)
-        #self.righthalf.configure(width=self.root_halfwidth, height=self.root_height)
-    '''  
+        if event.width != self.root_width or event.height != self.root_height:
+            self.root_width = event.width
+            self.root_height = event.height
+            self.root_halfwidth = int(self.root_width / 2) # for setting frame widths
+            self.root_halfheight = int(self.root_height / 2) # for setting frame heights
+            self.root_lefttopheight = int(self.root_height * 0.088 )
+            self.root_leftmidheight = int(self.root_height * 0.633)
+            self.root_leftbottomheight = int(self.root_height * 0.277)
+            self.root_ratio_height = int(self.root_halfwidth * self.ratio)
+            self.update()
+        return None
+    '''
 
     def factionButton(self):
         # we change the information in the extra box when this is called
@@ -302,11 +346,13 @@ class MainWindowService:
 
         # containers in the frames
         # right side subframes
-        self.righttophalf.pack(side="top")
+        #self.righttophalf.pack(side="top")
+        self.righttophalf.grid(column=0, row=0, sticky=N)
         self.righttophalf.columnconfigure(0, weight=1)
         self.righttophalf.rowconfigure(0, weight=1)
 
-        self.rightbottomhalf.pack(side="bottom")
+        #self.rightbottomhalf.pack(side="bottom")
+        self.rightbottomhalf.grid(column=0, row=1, sticky=S)
         self.rightbottomhalf.columnconfigure(0, weight=1)
         self.rightbottomhalf.rowconfigure(0, weight=1)
 
@@ -319,7 +365,8 @@ class MainWindowService:
         self.lefttopthird.columnconfigure(0, weight=1)
         self.lefttopthird.rowconfigure(0, weight=0)
 
-        self.leftmidthird.pack(side="top", expand=True, fill="both")
+        self.leftmidthird.pack_propagate(True)
+        self.leftmidthird.pack(side="top", expand=True, fill="x")
         self.leftmidthird.columnconfigure(0, weight=1)
         self.leftmidthird.rowconfigure(0, weight=1)
 
@@ -331,11 +378,13 @@ class MainWindowService:
         self.extra_infobox_button_frame.pack(side="left", fill="both", expand=True)
 
         # pack the elements so they go on screen
-        self.drop_box.grid(column=0, row=0, ipadx=16, ipady=4, sticky=(NW))
-        self.general_notes.grid(column=2, row=0, rowspan=2, ipady=16, ipadx=4, sticky=(NE))
-        self.zone_notes.grid(column=1, row=0, ipady=4, ipadx=4, sticky=(NE))
+        self.drop_box.grid(column=0, row=0, ipady=4, ipadx=83, columnspan=3, sticky=(NW))
+        self.general_notes.grid(column=4, row=0, rowspan=3, ipady=24, ipadx=16, sticky=(N))
+        self.zone_notes.grid(column=3, row=0, ipady=24, ipadx=18, rowspan=3, sticky=(N))
+        self.gov.grid(column=0, row=1, sticky=W, ipadx=4)
+        self.rel.grid(column=1, row=1, sticky=W, ipadx=2)
         
-        self.infobox.pack(fill="both", expand=True)
+        self.infobox.pack(fill="y", expand=True,)
         self.infobox.insert('1.0', activeZone.zoneDesc)
         self.infobox.configure(state="disabled")
 
@@ -350,8 +399,9 @@ class MainWindowService:
         self.extra_infobox.configure(state="disabled") # stops you from writing in it
 
         self.smallImageLabel.pack(side="left", fill="both", expand=True)
-        self.smallMapLabel.pack(side="right", fill="both", expand=True)
+        self.smallMapButton.pack(side="right", fill="both", expand=True)
         self.largeImageLabel.pack(side="top", fill="both", expand=True)
+        return None
 
     def updateData(self):
         # we use this to change whats on screen when the zone changes
@@ -360,6 +410,32 @@ class MainWindowService:
         self.infobox.insert(1.0, activeZone.zoneDesc)
         self.infobox.configure(state="disabled")
         self.factionButton() # we could change this later to find the button last clicked but for now this is fine
+        self.imageWork()
+        return None
+
+    def imageWork(self):
+        self.largeImageLabel.destroy()
+        self.smallImageLabel.destroy()
+        self.smallMapButton.destroy()
+        self.prepLrgImg = Image.open(activeZone.zoneLargeImg) # load the image using PIL
+        self.prepLrgImg = self.prepLrgImg.resize((self.root_halfwidth, self.root_ratio_height), Image.BILINEAR) # resize it
+        self.largeImage = ImageTk.PhotoImage(self.prepLrgImg) # change it to a normal image
+        self.largeImageLabel = ttk.Label(self.rightbottomhalf, image=self.largeImage) # prep the label
+
+        self.prepSmImg = Image.open(activeZone.zoneSmallImg) # load the image using PIL
+        self.prepSmImg = self.prepSmImg.resize((self.root_halfheight, self.root_halfheight), Image.BILINEAR) # resize it
+        self.smallImage = ImageTk.PhotoImage(self.prepSmImg) # change it to a normal image
+        self.smallImageLabel = ttk.Label(self.righttophalf, image=self.smallImage) # prep the label
+
+        self.prepSmMap = Image.open(activeZone.zoneSmallMap) # load the image using PIL
+        self.prepSmMap = self.prepSmMap.resize((self.root_halfheight, self.root_halfheight), Image.BILINEAR) # resize it
+        self.smallMap = ImageTk.PhotoImage(self.prepSmMap) # change it to a normal image
+        self.smallMapButton = ttk.Button(self.righttophalf, image=self.smallMap, command=openMapWindow) # prep the label
+
+        self.smallImageLabel.pack(side="left", fill="both", expand=True)
+        self.smallMapButton.pack(side="right", fill="both", expand=True)
+        self.largeImageLabel.pack(side="top", fill="both", expand=True)
+        return None
 
     def on_closing(self):
         writeLastActiveZone() # call the function to write to the file
@@ -389,6 +465,10 @@ def refreshInfo():
     dataFile = open("data.txt", "r") # re-open the file
     dataText = dataFile.read() # re-read it for the variable
     return None # no return necessary
+
+def openMapWindow():
+    BigMapWindow()
+    return None
 
 def openZoneNotes():
     # open up a zone notes window

@@ -1,4 +1,4 @@
-LAST_ACTIVE_ZONE=Border Zone
+LAST_ACTIVE_ZONE=Skinners Roam
 END_LAST_ACTIVE_ZONE
 ZONE_NAMES=Border Zone,Skinners Roam
 
@@ -42,5 +42,7 @@ IMAGE_SMALL=img/bz_sq.png
 IMAGE_SM_MAP=img/bz_map.png
 IMAGE_MAP=img/bz_outline.png
 NOTES=
+
+new note
 
 END_ZONE_INFO

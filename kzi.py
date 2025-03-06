@@ -1,5 +1,4 @@
-# Riley Poulin (STACK)
-# 02/17/2025 -
+
 '''
 KENSHI ZONE INFORMER
 '''

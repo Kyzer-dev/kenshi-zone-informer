@@ -1,4 +1,4 @@
-LAST_ACTIVE_ZONE=Skinners Roam
+LAST_ACTIVE_ZONE=Border Zone
 END_LAST_ACTIVE_ZONE
 ZONE_NAMES=Border Zone,Skinners Roam
 
@@ -37,10 +37,10 @@ OTHER=Bean
 FERT=Arid 100%, Green 10%, Swamp 0%
 ORE=Iron 100%, Copper 80%
 GRND=Stone 100%, Water 50%
-IMAGE_LARGE=img/bz.png
-IMAGE_SMALL=img/bz_sq.png
-IMAGE_SM_MAP=img/bz_map.png
-IMAGE_MAP=img/bz_outline.png
+IMAGE_LARGE=img/sr.png
+IMAGE_SMALL=img/sr_sq.png
+IMAGE_SM_MAP=img/sr_map.png
+IMAGE_MAP=img/sr_outline.png
 NOTES=
 
 new note

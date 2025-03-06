@@ -43,6 +43,8 @@ class DisplayedZone:
         self.zoneLargeMap = filteredText[17]
         self.zoneNotes = filteredText[18]
 
+        self.zoneDesc = self.buildDescString()
+
     def __str__(self):
         print(self.zoneName)
 
@@ -67,6 +69,16 @@ class DisplayedZone:
         self.zoneSmallMap = filteredText[16]
         self.zoneLargeMap = filteredText[17]
         self.zoneNotes = filteredText[18]
+
+        self.zoneDesc = self.buildDescString()
+
+    def buildDescString(self):
+        newDesc = str(self.zoneDesc)
+        newDescList = newDesc.split(":")
+        for count in range(len(newDescList)):
+            newDescList[count] = newDescList[count] + "\n"
+        newDesc = "".join(newDescList)
+        return newDesc
 
 class ZoneNotesWindow:
     # zone notes window
@@ -187,12 +199,9 @@ class MainWindowService:
         self.other = ttk.Button(self.extra_infobox_button_frame, text="Other", command=self.otherButton) # run func on click to change info box
 
         self.gov = ttk.Label(self.lefttopthird, textvariable=self.govString) # label for gov
-        
         self.rel = ttk.Label(self.lefttopthird, textvariable=self.relString) # label for relations
 
-
         self.infobox = tk.Text(self.leftmidthird, width=98, height=26) # make the main info box element
-
         self.extra_infobox = tk.Text(self.leftbottomthird) # make the extra info box element
 
         self.font_tuple = ("Calibri", 12, "normal") # need this to make the text not look bad

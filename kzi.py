@@ -15,35 +15,15 @@ dataFile = open("data.txt", "r")
 dataText = dataFile.read()
 CLOSING_TAG = "END_ZONE_INFO" # makes code cleaner to use a constant
 
-genNotesOpen = bool(False)
-genNotesActiveWindow = str()
+zoneNotesTracker = []
+generalNotesTracker = []
 
 # Our class for keeping data live
 class DisplayedZone:
     # Initialize our vars
     def __init__(self, filteredText):
         # all of this is so we can call these easy for the window
-        self.zoneName = filteredText[0]
-        self.zoneGov = filteredText[1]
-        self.zoneRel = filteredText[2]
-        self.zoneDesc = filteredText[3]
-        self.zoneSqd = filteredText[4]
-        self.zoneNest = filteredText[5]
-        self.zoneFact = filteredText[6]
-        self.zoneShop = filteredText[7]
-        self.zoneWthr = filteredText[8]
-        self.zoneBnty = filteredText[9]
-        self.zoneOthr = filteredText[10]
-        self.zoneFert = filteredText[11]
-        self.zoneOre = filteredText[12]
-        self.zoneGrnd = filteredText[13]
-        self.zoneLargeImg = filteredText[14]
-        self.zoneSmallImg = filteredText[15]
-        self.zoneSmallMap = filteredText[16]
-        self.zoneLargeMap = filteredText[17]
-        self.zoneNotes = filteredText[18]
-
-        self.zoneDesc = self.buildDescString()
+        self.updateData(filteredText)
 
     def __str__(self):
         print(self.zoneName)
@@ -70,15 +50,21 @@ class DisplayedZone:
         self.zoneLargeMap = filteredText[17]
         self.zoneNotes = filteredText[18]
 
-        self.zoneDesc = self.buildDescString()
+        self.zoneDesc = self.buildString(self.zoneDesc)
+        self.zoneSqd = self.buildString(self.zoneSqd)
+        self.zoneNest = self.buildString(self.zoneNest)
+        self.zoneFact = self.buildString(self.zoneFact)
+        self.zoneShop = self.buildString(self.zoneShop)
+        self.zoneWthr = self.buildString(self.zoneWthr)
 
-    def buildDescString(self):
-        newDesc = str(self.zoneDesc)
-        newDescList = newDesc.split(":")
-        for count in range(len(newDescList)):
-            newDescList[count] = newDescList[count] + "\n"
-        newDesc = "".join(newDescList)
-        return newDesc
+    def buildString(self, change):
+        newString = str(change)
+        newStringList = newString.split(":")
+        if len(newStringList) != 1 and len(newStringList) != 0:
+            for count in range(len(newStringList)):
+                newStringList[count] = newStringList[count] + "\n"
+        newString = "".join(newStringList)
+        return newString
 
 class ZoneNotesWindow:
     # zone notes window
@@ -99,12 +85,19 @@ class ZoneNotesWindow:
         self.textblock.insert(1.0, self.zoneData) # put the zone notes in the text element
         self.textblock.pack(fill="both", expand=True) # place it on screen
 
+        global zoneNotesTracker
+        zoneNotesTracker.append(self) #we add ourselves to the global list so we can not duplicate ourself
+        self.textblock.focus() #focus on the text block immediately
+
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing) # the easiest way to deal with saving the file is on close
         self.root.mainloop()
 
     def on_closing(self):
         # runs when the window closes; saves the changes
         writeZoneNotes(self.rememberName, self) # call function to write to the file
+        for each in range(len(zoneNotesTracker)):
+            if zoneNotesTracker[each] == self:
+                zoneNotesTracker.pop(each)
         self.root.destroy()
         
 class GeneralNotesWindow:
@@ -123,14 +116,17 @@ class GeneralNotesWindow:
         self.textblock.insert(1.0, self.readtext) # put the notes into the text element
         self.textblock.pack(fill="both", expand=True) # put the text element in the window
 
+        global generalNotesTracker
+        generalNotesTracker.append(self) #we add ourselves to the global list so we can not duplicate ourself
+        self.textblock.focus() #focus on the text block immediately
+
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing) # easiest way to save the changes is when the window closes
         self.root.mainloop()
 
     def on_closing(self):
         writeGenNotes(self) # call the function to write to the file
-        # global genNotesOpen       # this is leftover from an experiment
-        # genNotesOpen = False      # this is leftover from an experiment
-        self.root.destroy()    
+        generalNotesTracker.pop(0)
+        self.root.destroy()   
 
 class BigMapWindow:
     # big map window
@@ -480,7 +476,27 @@ def openMapWindow():
 
 def openZoneNotes():
     # open up a zone notes window
-    ZoneNotesWindow()
+    global zoneNotesTracker
+    clear = bool(True) # to know if we should make a window
+    skip = bool(False) # to know if we should just skip because there aren't any
+    index = int(0) # manual loop iteration
+    windows = len(zoneNotesTracker) # need length of the list for equality tests
+    if windows == 0:
+        skip = True
+    while clear == True and skip == False:
+        if zoneNotesTracker[index].rememberName != activeZone.zoneName: # test if the zone name of a window is not equal to the active zone
+            clear = True
+            index += 1 # iterate so we can continue checking the others
+        elif zoneNotesTracker[index].rememberName == activeZone.zoneName: # test if it is equal to the active zone
+            clear = False
+            zoneNotesTracker[index].root.lift() # bring to front
+            zoneNotesTracker[index].textblock.focus() # cursor in the box
+            index = 0
+            # dont need to iterate because it ends here
+        if index == windows:
+            skip = True
+    if clear == True:
+        ZoneNotesWindow()
     return None # no return necessary
 
 def writeZoneNotes(inputZone, window):
@@ -512,8 +528,19 @@ def readZoneNotes(inputZone):
 
 def openGenNotes():
     # open the gen notes window
-    GeneralNotesWindow()
-    return None # no return necessary
+    global generalNotesTracker
+    clear = bool(True)
+    active = len(generalNotesTracker)
+    if active != 0:
+        clear = False
+        generalNotesTracker[0].root.lift()
+        generalNotesTracker[0].textblock.focus()
+    else:
+        clear = True
+
+    if clear == True:
+        GeneralNotesWindow()
+    return None
 
 def readGenNotes():
     # read the gen notes file

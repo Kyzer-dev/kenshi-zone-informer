@@ -6,11 +6,11 @@ NAME=Border Zone
 GOV=Neutral
 REL=Neutral
 DESC=The Border Zone is arid, nearly-desolate landscape situated between the Holy Nation territories and the Shek Kingdom to the South-west. The Hub is a central location and the starting point for many game starts.::Despite being a neutral zone with no main government, the Shek Kingdom inhabits and controls the town of Squin in the South-west corner of the Border Zone.
-SQD=Bonedogs, Dust bandits, Nomads, Shek Patrols
-NEST=Bonedogs, Dust bandits
-FACT=Dust bandits, Ninja Thieves, Shek
-SHOP=Bar (The Hub), Rogue Bar (Near The Hub)
-WTHR=Clear, Dust Storm
+SQD=Bonedogs:Dust bandits:Nomads:Shek Patrols
+NEST=Bonedogs:Dust bandits
+FACT=Dust bandits:Ninja Thieves:Shek
+SHOP=Bar (The Hub):Rogue Bar (Near The Hub)
+WTHR=Clear:Dust Storm
 BNTY=Dust King
 OTHER=Bean
 FERT=Arid 100%, Green 10%, Swamp 0%
@@ -21,6 +21,23 @@ IMAGE_SMALL=img/bz_sq.png
 IMAGE_SM_MAP=img/bz_map.png
 IMAGE_MAP=img/bz_outline.png
 NOTES=Enter your notes for this zone here...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 END_ZONE_INFO
 
 NAME=Skinners Roam
@@ -42,6 +59,15 @@ IMAGE_SMALL=img/sr_sq.png
 IMAGE_SM_MAP=img/sr_map.png
 IMAGE_MAP=img/sr_outline.png
 NOTES=Enter your notes for this zone here...
+
+
+
+
+
+
+
+
+
 END_ZONE_INFO
 
 NAME=Ashlands
@@ -63,6 +89,8 @@ IMAGE_SMALL=img/al_sq.png
 IMAGE_SM_MAP=img/al_map.png
 IMAGE_MAP=img/al_outline.png
 NOTES=Enter your notes for this zone here...
+
+
 END_ZONE_INFO
 
 NAME=Swamp
@@ -84,6 +112,7 @@ IMAGE_SMALL=img/sw_sq.png
 IMAGE_SM_MAP=img/sw_map.png
 IMAGE_MAP=img/sw_outline.png
 NOTES=Enter your notes for this zone here...
+
 END_ZONE_INFO
 
 NAME=Great Desert
@@ -105,4 +134,15 @@ IMAGE_SMALL=img/gd_sq.png
 IMAGE_SM_MAP=img/gd_map.png
 IMAGE_MAP=img/gd_outline.png
 NOTES=Enter your notes for this zone here...
+
+
+
+
+
+
+
+
+
+
+
 END_ZONE_INFO

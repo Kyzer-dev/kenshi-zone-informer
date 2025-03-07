@@ -1,4 +1,4 @@
-LAST_ACTIVE_ZONE=Swamp
+LAST_ACTIVE_ZONE=Ashlands
 END_LAST_ACTIVE_ZONE
 ZONE_NAMES=Border Zone,Skinners Roam,Swamp,Great Desert,Ashlands
 
@@ -21,6 +21,7 @@ IMAGE_SMALL=img/bz_sq.png
 IMAGE_SM_MAP=img/bz_map.png
 IMAGE_MAP=img/bz_outline.png
 NOTES=Enter your notes for this zone here...
+
 END_ZONE_INFO
 
 NAME=Skinners Roam
@@ -42,6 +43,7 @@ IMAGE_SMALL=img/sr_sq.png
 IMAGE_SM_MAP=img/sr_map.png
 IMAGE_MAP=img/sr_outline.png
 NOTES=Enter your notes for this zone here...
+
 END_ZONE_INFO
 
 NAME=Ashlands
@@ -63,6 +65,7 @@ IMAGE_SMALL=img/al_sq.png
 IMAGE_SM_MAP=img/al_map.png
 IMAGE_MAP=img/al_outline.png
 NOTES=Enter your notes for this zone here...
+
 END_ZONE_INFO
 
 NAME=Swamp
@@ -84,6 +87,7 @@ IMAGE_SMALL=img/sw_sq.png
 IMAGE_SM_MAP=img/sw_map.png
 IMAGE_MAP=img/sw_outline.png
 NOTES=Enter your notes for this zone here...
+
 END_ZONE_INFO
 
 NAME=Great Desert
@@ -105,4 +109,5 @@ IMAGE_SMALL=img/gd_sq.png
 IMAGE_SM_MAP=img/gd_map.png
 IMAGE_MAP=img/gd_outline.png
 NOTES=Enter your notes for this zone here...
+
 END_ZONE_INFO

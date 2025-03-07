@@ -483,8 +483,15 @@ class MainWindowService:
         return None
 
     def on_closing(self):
-        writeLastActiveZone() # call the function to write to the file
-        self.root.destroy()
+        wantToClose = messagebox.askyesno("Confirm Quit", "Are you sure you want to quit?\nAny unsaved (unclosed) Notes windows will NOT be saved!")
+        if wantToClose:
+            writeLastActiveZone() # call the function to write to the file
+            self.root.destroy()
+        else:
+            return False
+        
+        
+        
 
 def filterFile(inputZone):
     # Data and vars

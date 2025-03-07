@@ -1,18 +1,18 @@
-LAST_ACTIVE_ZONE=Border Zone
+LAST_ACTIVE_ZONE=Swamp
 END_LAST_ACTIVE_ZONE
 ZONE_NAMES=Border Zone,Skinners Roam,Swamp,Great Desert,Ashlands
 
 NAME=Border Zone
 GOV=Neutral
 REL=Neutral
-DESC=The Border Zone is arid, nearly-desolate landscape situated between the Holy Nation territories and the Shek Kingdom to the South-west. The Hub is a central location and the starting point for many game starts.::Despite being a neutral zone with no main government, the Shek Kingdom inhabits and controls the town of Squin in the South-west corner of the Border Zone.
-SQD=Bonedogs:Dust bandits:Nomads:Shek Patrols
-NEST=Bonedogs:Dust bandits
-FACT=Dust bandits:Ninja Thieves:Shek
-SHOP=Bar (The Hub):Rogue Bar (Near The Hub)
-WTHR=Clear:Dust Storm
-BNTY=Dust King
-OTHER=Bean
+DESC=The Border Zone is arid, nearly-desolate landscape situated between the Holy Nation territories and the Shek Kingdom to the South-west. The Hub is a central location and the starting point for many game starts.||Despite being a neutral zone with no main government, the Shek Kingdom inhabits and controls the town of Squin in the South-west corner of the Border Zone.||Locations:|The Hub|Squin|Waystation|Dust King Tower|Rebel Base|Tower of Ninjas|Ruined Holy Outpost|Tiny Settlement
+SQD=Starving Bandits|Dust bandits|Slavemongers|Escaped Servants|Garru|Goats|Bonedogs|Tech Hunter|Nomads|Wandering Assassin
+NEST=Bonedogs|Dust bandits|Goat Herders
+TIPS=It can be a good strategy to lure hungry bandits into The Hub or Squin and fight them to get early game experience with a low chance of dying.|Good copper veins near Squin make it a good early choice grind spot to make easy cats.
+SHOP=The Hub: Bar, Rebel Base (Bar)|Squin: Bar (2), Weapons, Armor, Police, Travel Gear, General Store|Waystation: Bar, General Store, Robotics
+WTHR=Clear|Dust swirls|Sand steam|Dust storms
+BNTY=Dust King (20,000c)
+OTHER=
 FERT=Arid 100%, Green 10%, Swamp 0%
 ORE=Iron 100%, Copper 80%
 GRND=Stone 100%, Water 50%
@@ -21,128 +21,88 @@ IMAGE_SMALL=img/bz_sq.png
 IMAGE_SM_MAP=img/bz_map.png
 IMAGE_MAP=img/bz_outline.png
 NOTES=Enter your notes for this zone here...
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 END_ZONE_INFO
 
 NAME=Skinners Roam
-GOV=Neutral
-REL=Neutral
-DESC=screaming eagles
-SQD=Bonedogs, Dust bandits, Nomads, Shek Patrols
-NEST=Bonedogs, Dust bandits
-FACT=Dust bandits, Ninja Thieves, Shek
-SHOP=Bar (The Hub), Rogue Bar (Near The Hub)
-WTHR=Clear, Dust Storm
-BNTY=Dust King
-OTHER=Bean
+GOV=Holy Nation*
+REL=Neutral*
+DESC=A large rocky desert region which, while controlled by the Holy Nation, is not patrolled by them until certain world states are achieved. This is evident by multiple Holy Mines in the area.||Locations:|Holy Mines (3)|Holy Mine Ruin (2)
+SQD=Bonedogs|Starving bandits|Wild bulls|Holy Nation Outlaws
+NEST=Bonedogs|Dust bandits
+TIPS=The Starving Bandit groups here have huge numbers. Be careful.
+SHOP=There are no major settlements here.
+WTHR=Clear|Dust Storms|The Dust Wall
+BNTY=None
+OTHER=
 FERT=Arid 100%, Green 10%, Swamp 0%
-ORE=Iron 100%, Copper 80%
-GRND=Stone 100%, Water 50%
+ORE=???
+GRND=Stone ???, Water 50%
 IMAGE_LARGE=img/sr.png
 IMAGE_SMALL=img/sr_sq.png
 IMAGE_SM_MAP=img/sr_map.png
 IMAGE_MAP=img/sr_outline.png
 NOTES=Enter your notes for this zone here...
-
-
-
-
-
-
-
-
-
 END_ZONE_INFO
 
 NAME=Ashlands
-GOV=Neutral
-REL=Neutral
-DESC=screaming eagles
-SQD=Bonedogs, Dust bandits, Nomads, Shek Patrols
+GOV=Cat-lon's Exiles
+REL=Hostile
+DESC=A barren, ashen landscape which used to be the capital of the Second Empire. An end-game area which requires high-level gear due to both dangerous enemies and a hostile environment.||Locations:|Cat-Lon's Exile|Ashland Dome I|Ashland Dome II|Ashland Dome III|Ashland Dome IV|Ashland Dome Ruin (2)
+SQD=Iron Spiders|Cleanser Unit|Skeleton Legion|    Legion|    Legion Scout|    Screamer Unit|    Legion Thrall
 NEST=Bonedogs, Dust bandits
-FACT=Dust bandits, Ninja Thieves, Shek
-SHOP=Bar (The Hub), Rogue Bar (Near The Hub)
-WTHR=Clear, Dust Storm
-BNTY=Dust King
-OTHER=Bean
-FERT=Arid 100%, Green 10%, Swamp 0%
-ORE=Iron 100%, Copper 80%
-GRND=Stone 100%, Water 50%
+TIPS=Once you have high level characters (50+ in combat skills), they will also need environmental gear that protects from gas.
+SHOP=There are no major settlements here.
+WTHR=Ash Flakes|Poison Gas
+BNTY=Mad Cat-Lon
+OTHER=
+FERT=No fertility (dead environment)
+ORE=Iron 300%, Copper 300%
+GRND=Stone 0%, Water 0%
 IMAGE_LARGE=img/al.png
 IMAGE_SMALL=img/al_sq.png
 IMAGE_SM_MAP=img/al_map.png
 IMAGE_MAP=img/al_outline.png
 NOTES=Enter your notes for this zone here...
-
-
 END_ZONE_INFO
 
 NAME=Swamp
-GOV=Neutral
+GOV=Swampers
 REL=Neutral
-DESC=screaming eagles
-SQD=Bonedogs, Dust bandits, Nomads, Shek Patrols
-NEST=Bonedogs, Dust bandits
-FACT=Dust bandits, Ninja Thieves, Shek
-SHOP=Bar (The Hub), Rogue Bar (Near The Hub)
-WTHR=Clear, Dust Storm
-BNTY=Dust King
-OTHER=Bean
-FERT=Arid 100%, Green 10%, Swamp 0%
-ORE=Iron 100%, Copper 80%
-GRND=Stone 100%, Water 50%
+DESC=A large region below the Border Zone, ran by the Swampers. High concentrations of fog and foliage make visibility poor, and navigation is difficult due to a surface area consisting of a lot of water. The main reason to settle here is to grow hemp, although it also has good iron and copper.||Locations:|Shark|Grayflayer Village|Mud Town|Red Sabre Hideout|Rot|Stone Rat Village|Swamp Village (2)|Infested Lab|Lost Library Outpost|Swamped Lab|Empty Ruin
+SQD=Swamp Turtles|Blood Spiders|Red Sabres|Swamp Ninjas|Band of Bones|Wandering Assassin
+NEST=Swamp Raptor Nest
+TIPS=Be careful leaving weak characters here, as blood spider spawns can decimate and kill your characters.||Swamp raptors will try to eat your crops if they can wander close enough to them.
+SHOP=Shark: Blackshifter Casino, Blackshifter Hideout, Shop, Travel Shop, Smithy, Mechanical Shop, Fish and Drugs seller, The Dancing Skeleton (bar), Hounds HQ
+WTHR=Swamp
+BNTY=Red Sabre leader|Stone Rats leader
+OTHER=
+FERT=Arid 0%, Green 0%, Swamp 100%
+ORE=Iron 100%, Copper 100%
+GRND=Stone 50%, Water 200%
 IMAGE_LARGE=img/sw.png
 IMAGE_SMALL=img/sw_sq.png
 IMAGE_SM_MAP=img/sw_map.png
 IMAGE_MAP=img/sw_outline.png
 NOTES=Enter your notes for this zone here...
-
 END_ZONE_INFO
 
 NAME=Great Desert
-GOV=Neutral
+GOV=United Cities
 REL=Neutral
-DESC=screaming eagles
-SQD=Bonedogs, Dust bandits, Nomads, Shek Patrols
-NEST=Bonedogs, Dust bandits
-FACT=Dust bandits, Ninja Thieves, Shek
-SHOP=Bar (The Hub), Rogue Bar (Near The Hub)
-WTHR=Clear, Dust Storm
-BNTY=Dust King
-OTHER=Bean
-FERT=Arid 100%, Green 10%, Swamp 0%
-ORE=Iron 100%, Copper 80%
-GRND=Stone 100%, Water 50%
+DESC=The Great Desert is a massive desert landscape riddled with Slavemongers and Skimmers. Besides that, it's the headquarters zone of the United Cities.||Locations:|Bark|Heft|Sho-Battai|Stoat|Fort Mirage|Port North|Port South|Stone Camp|Old Village
+SQD=Skimmer|Rebel Farmers|Vagrants|Manhunters|Sand Ninjas (& Jounins)|Garru|Caravan Trader Boss|Slave Hunters|United Heroes League|United Cities|Mercenary Guild|Tech Hunters|Bounty Hunters|Nomad Animal Trader|Escaped Slave (Empire Peasants)|Slaver Caravan Boss|Wandering Assassin|Lost Drone|Hiver Trader Caravan|Noble Hunter
+NEST=Raider Camp|Vagrant Camp|Skimmer Nest|Small Skimmer Nest
+TIPS=Try not to make the nobles upset.
+SHOP=Bark: Armor, Bar, Farming, General Store, Mechanical Store, Noble House, Ranger Shop, Slave Shop||Heft: Tengu's Palace, Noble House, Police, Slave Shop, Armory, Bakery, Bar (2), Clothing, Farm, General Store, Mechanical Store, Ranger Shop, Robotics Workshop, Thieves Guild, Travel Gear||Sho-Battai: Bakery, Bar (2), General Store, Headgear, Mechanical Store, Noble House, Police, Ranger Shop, Slave Shop, Thieves Guild, Travel Gear||Stoat: Bar, Bakery, Clothing, Farming, General Store, Mechanical Store, Noble House, Police Station (2), Ranger Store, Slave Shop, Weapons||Port North: Noble House, Slaver Bar, Slave Shop (3)||Port South: Noble House, Slaver Bar, Slave Shop (3)||Stone Camp: Noble House, Slaver Bar, Slave Shop
+WTHR=Desert
+BNTY=TBD
+OTHER=
+FERT=Arid 0%, Green 0%, Swamp 0%
+ORE=Iron 100%, Copper 70%
+GRND=Stone 110%, Water 20%
 IMAGE_LARGE=img/gd.png
 IMAGE_SMALL=img/gd_sq.png
 IMAGE_SM_MAP=img/gd_map.png
 IMAGE_MAP=img/gd_outline.png
 NOTES=Enter your notes for this zone here...
-
-
-
-
-
-
-
-
-
-
-
 END_ZONE_INFO

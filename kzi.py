@@ -1,11 +1,17 @@
 
 '''
 KENSHI ZONE INFORMER
+This program requires Python PIL (Pillow) in order for the resizing of images to function properly. https://pypi.org/project/pillow/
+This program runs on Python 3.10.6 (as a requisite of Pillow)
+This program could potentially be modified a lot to be applicable to other circumstances, however this is fine as-is for the project.
+Started development February 17th, 2025
+First real release March 6th, 2025
+https://github.com/Kyzer-dev/kenshi-zone-informer
 '''
 
 from tkinter import *
 import time
-from tkinter import ttk
+from tkinter import ttk, messagebox
 import tkinter as tk
 import re
 from PIL import ImageTk, Image, ImageOps, ImageTk
@@ -36,11 +42,11 @@ class DisplayedZone:
         self.zoneDesc = filteredText[3]
         self.zoneSqd = filteredText[4]
         self.zoneNest = filteredText[5]
-        self.zoneFact = filteredText[6]
+        self.zoneTips = filteredText[6]
         self.zoneShop = filteredText[7]
         self.zoneWthr = filteredText[8]
         self.zoneBnty = filteredText[9]
-        self.zoneOthr = filteredText[10]
+        self.zoneOthr = filteredText[10] #unused right now
         self.zoneFert = filteredText[11]
         self.zoneOre = filteredText[12]
         self.zoneGrnd = filteredText[13]
@@ -53,13 +59,13 @@ class DisplayedZone:
         self.zoneDesc = self.buildString(self.zoneDesc)
         self.zoneSqd = self.buildString(self.zoneSqd)
         self.zoneNest = self.buildString(self.zoneNest)
-        self.zoneFact = self.buildString(self.zoneFact)
+        self.zoneTips = self.buildString(self.zoneTips)
         self.zoneShop = self.buildString(self.zoneShop)
         self.zoneWthr = self.buildString(self.zoneWthr)
 
     def buildString(self, change):
         newString = str(change)
-        newStringList = newString.split(":")
+        newStringList = newString.split("|")
         if len(newStringList) != 1 and len(newStringList) != 0:
             for count in range(len(newStringList)):
                 newStringList[count] = newStringList[count] + "\n"
@@ -82,7 +88,7 @@ class ZoneNotesWindow:
         self.font_tuple = ("Calibri", 12, "normal") # so the text doesn't look bad
         self.textblock = Text(self.root) # make the text element
         self.textblock.configure(font = self.font_tuple)
-        self.textblock.insert(1.0, self.zoneData) # put the zone notes in the text element
+        self.textblock.insert('1.0', self.zoneData) # put the zone notes in the text element
         self.textblock.pack(fill="both", expand=True) # place it on screen
 
         global zoneNotesTracker
@@ -94,11 +100,12 @@ class ZoneNotesWindow:
 
     def on_closing(self):
         # runs when the window closes; saves the changes
-        writeZoneNotes(self.rememberName, self) # call function to write to the file
-        for each in range(len(zoneNotesTracker)):
-            if zoneNotesTracker[each] == self:
-                zoneNotesTracker.pop(each)
-        self.root.destroy()
+        success = writeZoneNotes(self.rememberName, self) # call function to write to the file
+        if success == True:
+            for each in range(len(zoneNotesTracker)):
+                if zoneNotesTracker[each] == self:
+                    zoneNotesTracker.pop(each)
+            self.root.destroy()
         
 class GeneralNotesWindow:
     # general notes window
@@ -113,7 +120,7 @@ class GeneralNotesWindow:
         self.textblock = Text(self.root) # make the text element
         self.textblock.configure(font = self.font_tuple)
         self.readtext = readGenNotes() # get the gen notes file and read it to the var
-        self.textblock.insert(1.0, self.readtext) # put the notes into the text element
+        self.textblock.insert('1.0', self.readtext) # put the notes into the text element
         self.textblock.pack(fill="both", expand=True) # put the text element in the window
 
         global generalNotesTracker
@@ -150,6 +157,7 @@ class BigMapWindow:
 
 class MainWindowService:
     def __init__(self):
+        # creating a bunch of variables for the frames, buttons, labels, etc.
         self.root = Tk() # make the main window
         self.root.title("Kenshi Zone Informer") # set the title
         self.root.columnconfigure(0, weight=1)
@@ -161,8 +169,8 @@ class MainWindowService:
         self.root_halfwidth = int(self.root_width / 2) # for setting frame widths
         self.root_halfheight = int(self.root_height / 2) # for setting frame heights
         self.root_lefttopheight = int(self.root_height * 0.088 )
-        self.root_leftmidheight = int(self.root_height * 0.633)
-        self.root_leftbottomheight = int(self.root_height * 0.277)
+        self.root_leftmidheight = int(self.root_height * 0.600)
+        self.root_leftbottomheight = int(self.root_height * 0.300)
         self.root_ratio_height = int(self.root_halfwidth * self.ratio)
 
         self.mainframe = ttk.Frame(self.root, padding="5 5 5 5") # make the overall frame in the window
@@ -187,18 +195,22 @@ class MainWindowService:
         self.drop_box = ttk.Combobox(self.lefttopthird, values=zoneNames, textvariable=self.selectazone, state="readonly", width=60) # set up the combo box
         self.general_notes = ttk.Button(self.lefttopthird, text="General Notes", command=openGenNotes) # the button for general notes
         self.zone_notes = ttk.Button(self.lefttopthird, text="Zone Notes", command=openZoneNotes) # zone notes button
-        self.factions = ttk.Button(self.extra_infobox_button_frame, text="Factions", command=self.factionButton) # run func on click to change info box
+        self.tips = ttk.Button(self.extra_infobox_button_frame, text="Tips", command=self.tipsButton) # run func on click to change info box
         self.shops = ttk.Button(self.extra_infobox_button_frame, text="Shops", command=self.shopButton) # run func on click to change info box
         self.weather = ttk.Button(self.extra_infobox_button_frame, text="Weather", command=self.weatherButton) # run func on click to change info box
         self.prospecting = ttk.Button(self.extra_infobox_button_frame, text="Prospecting", command=self.prospectingButton) # run func on click to change info box
         self.bounties = ttk.Button(self.extra_infobox_button_frame, text="Bounties", command=self.bountiesButton) # run func on click to change info box
-        self.other = ttk.Button(self.extra_infobox_button_frame, text="Other", command=self.otherButton) # run func on click to change info box
+        self.nests_camps = ttk.Button(self.extra_infobox_button_frame, text="Nests/Camps", command=self.nests_campsButton) # run func on click to change info box
+        self.squads = ttk.Button(self.extra_infobox_button_frame, text="Squads", command=self.squadsButton) # run func on click to change info box
 
         self.gov = ttk.Label(self.lefttopthird, textvariable=self.govString) # label for gov
         self.rel = ttk.Label(self.lefttopthird, textvariable=self.relString) # label for relations
 
         self.infobox = tk.Text(self.leftmidthird, width=98, height=26) # make the main info box element
         self.extra_infobox = tk.Text(self.leftbottomthird) # make the extra info box element
+
+        #self.infobox_sb = tk.Scrollbar(self.leftmidthird, command=self.infobox.yview)
+        #self.extra_infobox_sb = tk.Scrollbar(self.leftmidthird, command=self.extra_infobox.yview)
 
         self.font_tuple = ("Calibri", 12, "normal") # need this to make the text not look bad
 
@@ -249,7 +261,6 @@ class MainWindowService:
         self.righthalf.update()
         self.righttophalf.update()
         self.rightbottomhalf.update()
-        self.leftmidthird.configure(height=self.root_leftmidheight)
         '''
         # keeping this in case
         self.lefthalf.config(width=self.root_halfwidth, height=self.root_height)
@@ -288,12 +299,23 @@ class MainWindowService:
         return None
     '''
 
-    def factionButton(self):
+    def topLabels(self):
+        # updating the labels at the top of the window
+        self.builtGovStr = str("Local Government: " + activeZone.zoneGov) # make a string for gov label
+        self.govString = StringVar(value=self.builtGovStr) 
+        self.builtRelStr = str("Default Relations: " + activeZone.zoneRel) # make a string for rel label
+        self.relString = StringVar(value=self.builtRelStr)
+        self.gov.config(textvariable=self.govString) # reset
+        self.rel.config(textvariable=self.relString) # reset
+        return None
+
+    def tipsButton(self):
         # we change the information in the extra box when this is called
         self.extra_infobox.configure(state="normal")
         self.extra_infobox.delete(1.0, tk.END)
-        self.extra_infobox.insert(1.0, activeZone.zoneFact)
+        self.extra_infobox.insert(1.0, activeZone.zoneTips)
         self.extra_infobox.configure(state="disabled")
+        return None
 
     def shopButton(self):
         # we change the information in the extra box when this is called
@@ -301,6 +323,7 @@ class MainWindowService:
         self.extra_infobox.delete(1.0, tk.END)
         self.extra_infobox.insert(1.0, activeZone.zoneShop)
         self.extra_infobox.configure(state="disabled")
+        return None
 
     def weatherButton(self):
         # we change the information in the extra box when this is called
@@ -308,6 +331,7 @@ class MainWindowService:
         self.extra_infobox.delete(1.0, tk.END)
         self.extra_infobox.insert(1.0, activeZone.zoneWthr)
         self.extra_infobox.configure(state="disabled")
+        return None
 
     def prospectingButton(self):
         # we change the information in the extra box when this is called
@@ -317,6 +341,7 @@ class MainWindowService:
         self.extra_infobox.delete(1.0, tk.END)
         self.extra_infobox.insert(1.0, temp)
         self.extra_infobox.configure(state="disabled")
+        return None
 
     def bountiesButton(self):
         # we change the information in the extra box when this is called
@@ -324,13 +349,23 @@ class MainWindowService:
         self.extra_infobox.delete(1.0, tk.END)
         self.extra_infobox.insert(1.0, activeZone.zoneBnty)
         self.extra_infobox.configure(state="disabled")
+        return None
 
-    def otherButton(self):
+    def nests_campsButton(self):
+        # we change the information in the extra box when this is called
+        self.extra_infobox.configure(state="normal")
+        self.extra_infobox.delete(1.0, tk.END)
+        self.extra_infobox.insert(1.0, activeZone.zoneNest)
+        self.extra_infobox.configure(state="disabled")
+        return None
+
+    def squadsButton(self):
         # we change the information in the extra box when this is called
         self.extra_infobox.configure(state="normal")
         self.extra_infobox.delete(1.0, tk.END)
         self.extra_infobox.insert(1.0, activeZone.zoneSqd)
         self.extra_infobox.configure(state="disabled")
+        return None
 
     def packItUp(self):
         # We're putting all the elements in the window
@@ -388,19 +423,23 @@ class MainWindowService:
         self.gov.grid(column=0, row=1, sticky=W, ipadx=4)
         self.rel.grid(column=1, row=1, sticky=W, ipadx=2)
         
-        self.infobox.pack(fill="y", expand=True,)
+        self.infobox.pack(side="left", fill="y", expand=True,)
         self.infobox.insert('1.0', activeZone.zoneDesc)
         self.infobox.configure(state="disabled")
+        #self.infobox_sb.pack(side="right", fill="y", padx=10, pady=10)
 
-        self.factions.pack(expand=True, ipadx=4, ipady=4, fill="both")
-        self.shops.pack(expand=True, ipadx=4, ipady=4, fill="both")
-        self.weather.pack(expand=True, ipadx=4, ipady=4, fill="both")
-        self.prospecting.pack(expand=True, ipadx=4, ipady=4, fill="both")
-        self.bounties.pack(expand=True, ipadx=4, ipady=4, fill="both")
-        self.other.pack(expand=True, ipadx=4, ipady=4, fill="both")
+        self.tips.pack(expand=True, ipadx=4, ipady=2, fill="both")
+        self.shops.pack(expand=True, ipadx=4, ipady=2, fill="both")
+        self.weather.pack(expand=True, ipadx=4, ipady=2, fill="both")
+        self.prospecting.pack(expand=True, ipadx=4, ipady=2, fill="both")
+        self.bounties.pack(expand=True, ipadx=4, ipady=2, fill="both")
+        self.squads.pack(expand=True, ipadx=4, ipady=2, fill="both")
+        self.nests_camps.pack(expand=True, ipadx=4, ipady=2, fill="both")
+
         self.extra_infobox.pack(side="left", fill="both", expand=True)
-        self.extra_infobox.insert('1.0', activeZone.zoneFact) # put the info in there
+        self.extra_infobox.insert('1.0', activeZone.zoneTips) # put the info in there
         self.extra_infobox.configure(state="disabled") # stops you from writing in it
+        #self.extra_infobox_sb.pack(side="right", fill="y", padx=10, pady=10)
 
         self.smallImageLabel.pack(side="left", fill="both", expand=True)
         self.smallMapButton.pack(side="right", fill="both", expand=True)
@@ -413,8 +452,9 @@ class MainWindowService:
         self.infobox.delete(1.0, tk.END)
         self.infobox.insert(1.0, activeZone.zoneDesc)
         self.infobox.configure(state="disabled")
-        self.factionButton() # we could change this later to find the button last clicked but for now this is fine
-        self.imageWork()
+        self.tipsButton() # we could change this later to find the button last clicked but for now this is fine
+        self.imageWork() #update images
+        self.topLabels() #update top labels
         return None
 
     def imageWork(self):
@@ -502,19 +542,24 @@ def openZoneNotes():
 def writeZoneNotes(inputZone, window):
     # this is similar to the filterFile function but has to be different for writing zone notes
     global dataText # not sure if we need to but we do this anyway
-
-    dataFileWriteMode = open("data.txt", "w") # open the data file as a write-able
     textLength = len(dataText) # length of the file
     zoneToFind = str("NAME="+inputZone) # put together a string to search the file
     startingIndex = dataText.find(zoneToFind) # we need to find the index of the zone name in the file
     endingIndex = dataText.find(CLOSING_TAG, startingIndex, textLength) # we need to find where zone data ends
     notesIndex = (dataText.find("NOTES=", startingIndex, endingIndex) + 6) # get the zone notes index and add 6 (the length of the 'notes=' tag)
     notesToWrite = window.textblock.get('1.0', tk.END) # get the new notes from the window
-    newNotes = dataText[:notesIndex] + notesToWrite + dataText[endingIndex:textLength] # make a new block of data to write and replace
-    dataFileWriteMode.write(newNotes) # write
-    del dataFileWriteMode # delete the variable this function makes or it causes major issues
-    refreshInfo() # reload the file
-    return None # we don't need to return anything
+    if CLOSING_TAG in notesToWrite or "NAME=" in notesToWrite:
+        error_cant_write_that()
+        del dataFileWriteMode # delete the variable this function makes or it causes major issues
+        refreshInfo() # reload the file, just in case
+        return False # fail
+    else:
+        dataFileWriteMode = open("data.txt", "w") # open the data file as a write-able
+        newNotes = dataText[:notesIndex] + notesToWrite + dataText[endingIndex:textLength] # make a new block of data to write and replace
+        dataFileWriteMode.write(newNotes) # write
+        del dataFileWriteMode # delete the variable this function makes or it causes major issues
+        refreshInfo() # reload the file
+        return True # success
     
 def readZoneNotes(inputZone):
     # while similar to other functions, has a unique purpose
@@ -553,7 +598,8 @@ def writeGenNotes(window):
     genNotes = open("general_notes.txt", "w")
     notesFromWindow = window.textblock.get('1.0', tk.END)
     genNotes.write(notesFromWindow)
-    return None # no return necessary
+    del genNotes
+    return None
 
 def getZoneNames():
     # we search a specific line index and split it up to get the zone names to populate the combobox
@@ -591,6 +637,9 @@ def writeLastActiveZone():
     dataFileWriteMode.write(finalData) # write the final string to the file
     del dataFileWriteMode # delete the variable this function makes or it causes major issues
     return None # we dont need to return anything
+
+def error_cant_write_that():
+    messagebox.showerror("Error", "You cannot have any of the following tags in your notes:END_ZONE_INFO\nNAME=")
 
 if __name__ == "__main__":
     # Initialize to something at all

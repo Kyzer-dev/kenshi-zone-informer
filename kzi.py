@@ -153,6 +153,7 @@ class BigMapWindow:
 
         self.mapImageLabel.pack(fill="both", expand=True)
 
+        self.root.resizable(False, False)
         self.root.mainloop()
 
 class MainWindowService:

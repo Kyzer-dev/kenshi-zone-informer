@@ -2,6 +2,8 @@ Kenshi Zone Informer
 
 An offline application written in Python. Loads prewritten, pre-tagged raw text from a text file and populates appropriate fields in the main window. Supports loading images, which must be pathed in the data file and provided in that path. Image below has all windows open, including the overall map image, which is opened by clicking the top-right most image in the main window.
 
+Note that this project must be opened as a folder in VSCode as support for anywhere hasn't been implemented. I am considering implementing this. It was not included in the original code as I was still learning Python.
+
 Images taken from the fandom wiki pages -- I take no credit, also this is a personal project for class.
 
 
